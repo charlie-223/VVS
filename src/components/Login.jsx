@@ -500,4 +500,3 @@ export function Login({ onLogin }) {
     </div>
   )
 }
-s
