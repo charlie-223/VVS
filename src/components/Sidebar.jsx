@@ -8,7 +8,7 @@ import {
   Building2,
   ArchiveX
 } from "lucide-react"
-import shobeLogo from "../assets/shobelogo.png"
+import vvsLogo from "../assets/vvsLogo.jpg"
 
 export function Sidebar({ activeView, onViewChange, currentUser }) {
   const menuItems = [
@@ -48,8 +48,8 @@ export function Sidebar({ activeView, onViewChange, currentUser }) {
         <div className="w-full flex flex-col items-center gap-2">
           <div className="w-16 h-16 flex items-center justify-center">
             <img
-              src={shobeLogo}
-              alt="Shobe Printing Services Logo"
+              src={vvsLogo}
+              alt="VVS Logo"
               className="w-20 h-20 object-contain"
             />
           </div>

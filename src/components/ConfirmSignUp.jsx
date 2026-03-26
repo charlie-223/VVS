@@ -3,7 +3,7 @@ import supabase from "../lib/supabaseClient"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Button } from "./ui/button"
 import { toast } from "sonner"
-import shobeLogo from "../assets/shobelogo.png"
+import vvsLogo from "../assets/vvsLogo.jpg"
 import { Loader2 } from "lucide-react"
 
 export function ConfirmSignUp() {
@@ -268,8 +268,8 @@ export function ConfirmSignUp() {
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <img
-                src={shobeLogo}
-                alt="Shobe Printing Services Logo"
+                src={vvsLogo}
+                alt="VVS Logo"
                 className="w-20 h-20 object-contain"
               />
             </div>

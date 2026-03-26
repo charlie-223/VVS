@@ -11,7 +11,7 @@ import {
 } from "./ui/card"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
-import shobeLogo from "../assets/shobelogo.png"
+import vvsLogo from "../assets/vvsLogo.jpg"
 import supabase from "../lib/supabaseClient"
 import { useAuth } from "../contexts/AuthContext"
 
@@ -200,8 +200,8 @@ export function ResetPassword() {
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <img
-                src={shobeLogo}
-                alt="Shobe Printing Services Logo"
+                src={vvsLogo}
+                alt="VVS Logo"
                 className="w-20 h-20 object-contain"
               />
             </div>
