@@ -15,7 +15,7 @@ import { Checkbox } from "./ui/checkbox"
 import { toast } from "sonner"
 import { Eye, EyeOff } from "lucide-react"
 import { Footer } from "./Footer"
-import shobeLogo from "../assets/shobelogo.png"
+import vvsLogo from "../assets/vvs logo.jpg"
 // Supabase integration — the app now requires Supabase for authentication.
 // Enable by setting VITE_USE_SUPABASE=true and providing VITE_SUPABASE_URL and
 // VITE_SUPABASE_ANON_KEY in your .env. The helper functions are in src/lib/auth.js
@@ -347,8 +347,8 @@ export function Login({ onLogin }) {
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
               <img
-                src={shobeLogo}
-                alt="Shobe Printing Service Logo"
+                src={vvsLogo}
+                alt="VVS Logo"
                 className="w-20 h-20 object-contain"
               />
             </div>
