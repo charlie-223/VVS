@@ -1,0 +1,5 @@
+{
+  "projectUrl": "https://nlooxbzilacwwkcrkaoo.supabase.co",
+  "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sb294YnppbGFjd3drY3JrYW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyMDgzNDMsImV4cCI6MjA3Njc4NDM0M30.d-ts0J5S-KcKjs40iNEv345I5A0gdXJuR0AThH-0Tlg",
+  "notes": "Replace the values above with your Supabase project's URL and anon (public) key. Alternatively, set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in a .env file and set VITE_USE_SUPABASE=true to enable Supabase authentication. Do NOT commit sensitive keys to public repos."
+}
