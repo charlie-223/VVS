@@ -15,7 +15,7 @@ import { Checkbox } from "./ui/checkbox"
 import { toast } from "sonner"
 import { Eye, EyeOff } from "lucide-react"
 import { Footer } from "./Footer"
-import vvsLogo from "../assets/vvs logo.jpg"
+import vvsLogo from "../assets/vvsLogo.jpg"
 // Supabase integration — the app now requires Supabase for authentication.
 // Enable by setting VITE_USE_SUPABASE=true and providing VITE_SUPABASE_URL and
 // VITE_SUPABASE_ANON_KEY in your .env. The helper functions are in src/lib/auth.js
