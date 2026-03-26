@@ -348,11 +348,11 @@ export function Login({ onLogin }) {
             <div className="flex justify-center mb-4">
               <img
                 src={shobeLogo}
-                alt="Shobe Printing Services Logo"
+                alt="Shobe Printing Service Logo"
                 className="w-20 h-20 object-contain"
               />
             </div>
-            <CardTitle className="text-2xl">Shobe Printing Services</CardTitle>
+            <CardTitle className="text-2xl">TESTING</CardTitle>
             <CardDescription>Inventory Management System</CardDescription>
           </CardHeader>
           <CardContent>
@@ -500,3 +500,4 @@ export function Login({ onLogin }) {
     </div>
   )
 }
+s
