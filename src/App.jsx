@@ -11,6 +11,7 @@ import { Login } from "./components/Login";
 import { ResetPassword } from "./components/ResetPassword";
 import { ConfirmSignUp } from "./components/ConfirmSignUp";
 import { Account } from "./components/Account";
+import { PrintService } from "./components/PrintService";
 import { Toaster } from "./components/ui/sonner";
 import { toast } from 'sonner';
 import { useAuth } from "./contexts/AuthContext";
@@ -332,8 +333,6 @@ export default function App() {
 
   const handleLogin = async (idOrEmail, role) => {
     try {
-
-
       const userRole = role || 'User'
 
       // Decide which view to show after successful login
@@ -615,7 +614,7 @@ export default function App() {
   }, [lowStockItems]);
 
   const renderContent = () => {
-  switch (activeView) {
+    switch (activeView) {
       case "dashboard":
         return (
           <Dashboard
@@ -692,7 +691,7 @@ export default function App() {
                 archivedBy: currentUser?.username || "Unknown",
                 reason: user.reason,
               };
-                            setArchivedUsers((prev) => [archivedUser, ...prev]);
+              setArchivedUsers((prev) => [archivedUser, ...prev]);
             }}
             onNavigateToAccount={() => setActiveView("account")}
           />
@@ -704,6 +703,15 @@ export default function App() {
             currentUser={currentUser}
             onLogout={handleLogout}
             lowStockItems={getLowStockItems()}
+            onNavigateToAccount={() => setActiveView("account")}
+          />
+        );
+      case "print-service":
+        return (
+          <PrintService
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            lowStockItems={lowStockItems}
             onNavigateToAccount={() => setActiveView("account")}
           />
         );
@@ -830,4 +838,3 @@ export default function App() {
     </div>
   )
 }
-
