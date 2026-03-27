@@ -352,8 +352,8 @@ export function Login({ onLogin }) {
                 className="w-20 h-20 object-contain"
               />
             </div>
-            <CardTitle className="text-2xl">TESTING</CardTitle>
-            <CardDescription>Inventory Management System</CardDescription>
+            <CardTitle className="text-2xl">VVS Printing Services</CardTitle>
+            <CardDescription>Printing Services System</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
