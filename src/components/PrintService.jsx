@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload, FileText, X, Printer, Settings } from "lucide-react";
-import { Header } from "./Header";
+import { PageHeader } from "./PageHeader";
 import { toast } from "sonner";
 import { supabaseAdmin } from "../lib/supabaseClient";
 
@@ -17,7 +17,6 @@ export function PrintService({
 
   const isStaff = currentUser?.role === "Staff";
 
-  // Print settings state
   const [printSettings, setPrintSettings] = useState({
     copies: 1,
     paperSize: "letter",
@@ -25,6 +24,16 @@ export function PrintService({
     colorMode: "color",
     duplex: "none",
   });
+
+  useEffect(() => {
+    return () => {
+      uploadedFiles.forEach((file) => {
+        if (file.url) URL.revokeObjectURL(file.url);
+      });
+    };
+  }, [uploadedFiles]);
+
+  const isPrintablePdf = (file) => file?.type === "application/pdf";
 
   const handleFileSelect = (e) => {
     const files = e.target.files;
@@ -36,23 +45,27 @@ export function PrintService({
     }
 
     Array.from(files).forEach((file) => {
-      if (
+      const isSupported =
         file.type === "application/pdf" ||
         file.type === "application/msword" ||
         file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      ) {
-        const newFile = {
-          id: Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        };
-        setUploadedFiles((prev) => [...prev, newFile]);
-      } else {
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+      if (!isSupported) {
         toast.error(`${file.name} is not a supported file type.`);
+        return;
       }
+
+      const newFile = {
+        id: Math.random().toString(36).slice(2, 11),
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        file, // keep the original File object
+        url: URL.createObjectURL(file),
+      };
+
+      setUploadedFiles((prev) => [...prev, newFile]);
     });
 
     if (fileInputRef.current) {
@@ -61,7 +74,12 @@ export function PrintService({
   };
 
   const handleRemoveFile = (id) => {
-    setUploadedFiles((prev) => prev.filter((file) => file.id !== id));
+    setUploadedFiles((prev) => {
+      const target = prev.find((f) => f.id === id);
+      if (target?.url) URL.revokeObjectURL(target.url);
+      return prev.filter((file) => file.id !== id);
+    });
+
     if (selectedFile?.id === id) {
       setSelectedFile(null);
       setShowPrintSettings(false);
@@ -73,6 +91,7 @@ export function PrintService({
       toast.error("Only Staff members can print documents.");
       return;
     }
+
     setSelectedFile(file);
     setShowPrintSettings(true);
   };
@@ -81,11 +100,21 @@ export function PrintService({
     if (!selectedFile) return;
 
     try {
-      // Log the print job to Supabase transactions
+      if (!isPrintablePdf(selectedFile)) {
+        toast.error(
+          "Direct in-browser printing is supported for PDF only. Please convert DOC/DOCX to PDF first."
+        );
+        return;
+      }
+
       const { error } = await supabaseAdmin.from("transactions").insert({
         type: "Print",
         quantity: printSettings.copies,
-        note: `Printed "${selectedFile.name}" — ${printSettings.copies} cop${printSettings.copies > 1 ? "ies" : "y"}, ${printSettings.paperSize.toUpperCase()}, ${printSettings.orientation}, ${printSettings.colorMode}, duplex: ${printSettings.duplex}`,
+        note: `Printed "${selectedFile.name}" — ${printSettings.copies} copy${
+          printSettings.copies > 1 ? "ies" : ""
+        }, ${printSettings.paperSize.toUpperCase()}, ${
+          printSettings.orientation
+        }, ${printSettings.colorMode}, duplex: ${printSettings.duplex}`,
         user_id: currentUser?.id,
         username: currentUser?.username,
       });
@@ -96,17 +125,37 @@ export function PrintService({
         return;
       }
 
-      // Create a hidden iframe to print the document
       const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
+      iframe.style.position = "fixed";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "0";
       iframe.src = selectedFile.url;
+
       document.body.appendChild(iframe);
 
       iframe.onload = () => {
-        iframe.contentWindow?.print();
-        setTimeout(() => {
-          document.body.removeChild(iframe);
-        }, 1000);
+        try {
+          const win = iframe.contentWindow;
+          if (!win) throw new Error("Print window not available");
+
+          win.focus();
+          win.print();
+
+          setTimeout(() => {
+            if (document.body.contains(iframe)) {
+              document.body.removeChild(iframe);
+            }
+          }, 1500);
+        } catch (err) {
+          console.error("Print iframe error:", err);
+          toast.error("Unable to open the print dialog.");
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }
       };
 
       toast.success(`Print job sent: ${selectedFile.name}`);
@@ -125,18 +174,16 @@ export function PrintService({
 
   return (
     <div className="bg-white h-full flex flex-col">
-      <Header
+      <PageHeader
+        title="Print Service"
         currentUser={currentUser}
         onLogout={onLogout}
+        showNotifications={true}
+        lowStockItems={lowStockItems}
+        onNavigateToAccount={onNavigateToAccount}
       />
 
       <div className="flex-1 overflow-auto p-6">
-        {/* Page Title */}
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Print Service
-        </h2>
-
-        {/* Upload Section */}
         <div className="mb-6">
           <div
             onClick={() => fileInputRef.current?.click()}
@@ -146,7 +193,9 @@ export function PrintService({
             <p className="mb-2 text-sm font-medium text-gray-900">
               Click to upload documents
             </p>
-            <p className="text-xs text-gray-500">PDF, DOC, DOCX files accepted</p>
+            <p className="text-xs text-gray-500">
+              PDF, DOC, DOCX files accepted
+            </p>
             <input
               ref={fileInputRef}
               type="file"
@@ -158,12 +207,12 @@ export function PrintService({
           </div>
         </div>
 
-        {/* Uploaded Files List */}
         {uploadedFiles.length > 0 && (
           <div className="mb-6">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">
               Uploaded Documents ({uploadedFiles.length})
             </h3>
+
             <div className="space-y-3">
               {uploadedFiles.map((file) => (
                 <div
@@ -181,6 +230,7 @@ export function PrintService({
                       </p>
                     </div>
                   </div>
+
                   <div className="flex items-center gap-2">
                     {isStaff && (
                       <button
@@ -191,6 +241,7 @@ export function PrintService({
                         Print
                       </button>
                     )}
+
                     <button
                       onClick={() => handleRemoveFile(file.id)}
                       className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
@@ -204,7 +255,6 @@ export function PrintService({
           </div>
         )}
 
-        {/* Print Settings Modal */}
         {showPrintSettings && selectedFile && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
@@ -217,7 +267,7 @@ export function PrintService({
                 </div>
                 <button
                   onClick={() => setShowPrintSettings(false)}
-                  className="rounded-lg p1 text-gray-400 hover:bg-gray-100"
+                  className="rounded-lg p-1 text-gray-400 hover:bg-gray-100"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -230,7 +280,6 @@ export function PrintService({
               </div>
 
               <div className="space-y-4">
-                {/* Number of Copies */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     Number of Copies
@@ -250,7 +299,6 @@ export function PrintService({
                   />
                 </div>
 
-                {/* Paper Size */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     Paper Size
@@ -272,7 +320,6 @@ export function PrintService({
                   </select>
                 </div>
 
-                {/* Orientation */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     Orientation
@@ -292,7 +339,6 @@ export function PrintService({
                   </select>
                 </div>
 
-                {/* Color Mode */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     Color Mode
@@ -313,7 +359,6 @@ export function PrintService({
                   </select>
                 </div>
 
-                {/* Duplex */}
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">
                     Duplex Printing
@@ -321,7 +366,10 @@ export function PrintService({
                   <select
                     value={printSettings.duplex}
                     onChange={(e) =>
-                      setPrintSettings({ ...printSettings, duplex: e.target.value })
+                      setPrintSettings({
+                        ...printSettings,
+                        duplex: e.target.value,
+                      })
                     }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
