@@ -49,7 +49,7 @@ export function Sidebar({ activeView, onViewChange, currentUser }) {
   )
 
   return (
-    <div className="w-48 bg-gray-50 h-screen flex flex-col fixed left-0 top-0 z-40 border-r border-gray-200">
+    <div className="w-48 h-screen flex flex-col fixed left-0 top-0 z-40 border-r border-gray-200" style={{ backgroundColor: '#f9fafb' }}>
       {/* Logo/Brand */}
       <div className="p-4 flex-shrink-0 border-b border-gray-200">
         <div className="w-full flex flex-col items-center gap-2">
