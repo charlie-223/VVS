@@ -61,7 +61,7 @@ export function PrintService({
         name: file.name,
         type: file.type,
         size: file.size,
-        file, // keep the original File object
+        file,
         url: URL.createObjectURL(file),
       };
 
@@ -107,23 +107,36 @@ export function PrintService({
         return;
       }
 
-      const { error } = await supabaseAdmin.from("transactions").insert({
+      const payload = {
         type: "Print",
-        quantity: printSettings.copies,
-        note: `Printed "${selectedFile.name}" — ${printSettings.copies} copy${
-          printSettings.copies > 1 ? "ies" : ""
+        quantity: Number(printSettings.copies) || 1,
+        note: `Printed "${selectedFile.name}" - ${
+          Number(printSettings.copies) > 1 ? "copies" : "copy"
         }, ${printSettings.paperSize.toUpperCase()}, ${
           printSettings.orientation
         }, ${printSettings.colorMode}, duplex: ${printSettings.duplex}`,
-        user_id: currentUser?.id,
-        username: currentUser?.username,
-      });
+        user_id: currentUser?.id ?? null,
+        username: currentUser?.username ?? null,
+      };
+
+      const { data, error } = await supabaseAdmin
+        .from("transactions")
+        .insert([payload])
+        .select();
 
       if (error) {
-        console.error("Failed to log print transaction:", error);
-        toast.error("Failed to log print job. Please try again.");
+        console.error("Failed to log print transaction:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+          payload,
+        });
+        toast.error(`Failed to log print job: ${error.message}`);
         return;
       }
+
+      console.log("Print transaction logged:", data);
 
       const iframe = document.createElement("iframe");
       iframe.style.position = "fixed";
@@ -193,9 +206,7 @@ export function PrintService({
             <p className="mb-2 text-sm font-medium text-gray-900">
               Click to upload documents
             </p>
-            <p className="text-xs text-gray-500">
-              PDF, DOC, DOCX files accepted
-            </p>
+            <p className="text-xs text-gray-500">PDF, DOC, DOCX files accepted</p>
             <input
               ref={fileInputRef}
               type="file"
