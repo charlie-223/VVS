@@ -4,6 +4,8 @@ import { PageHeader } from "./PageHeader";
 import { toast } from "sonner";
 import { supabaseAdmin } from "../lib/supabaseClient";
 
+const PRINT_TRANSACTION_TYPE = "Print"; // change this if your transactions_type_check allows a different value
+
 export function PrintService({
   currentUser,
   onLogout,
@@ -107,11 +109,13 @@ export function PrintService({
         return;
       }
 
+      const copies = Number(printSettings.copies) || 1;
+
       const payload = {
-        type: "Print",
-        quantity: Number(printSettings.copies) || 1,
+        type: PRINT_TRANSACTION_TYPE,
+        quantity: copies,
         note: `Printed "${selectedFile.name}" - ${
-          Number(printSettings.copies) > 1 ? "copies" : "copy"
+          copies > 1 ? "copies" : "copy"
         }, ${printSettings.paperSize.toUpperCase()}, ${
           printSettings.orientation
         }, ${printSettings.colorMode}, duplex: ${printSettings.duplex}`,
@@ -119,12 +123,15 @@ export function PrintService({
         username: currentUser?.username ?? null,
       };
 
+      let printLogFailed = false;
+
       const { data, error } = await supabaseAdmin
         .from("transactions")
         .insert([payload])
         .select();
 
       if (error) {
+        printLogFailed = true;
         console.error("Failed to log print transaction:", {
           message: error.message,
           details: error.details,
@@ -132,11 +139,11 @@ export function PrintService({
           code: error.code,
           payload,
         });
-        toast.error(`Failed to log print job: ${error.message}`);
-        return;
-      }
 
-      console.log("Print transaction logged:", data);
+        toast.error(`Print job will continue, but logging failed: ${error.message}`);
+      } else {
+        console.log("Print transaction logged:", data);
+      }
 
       const iframe = document.createElement("iframe");
       iframe.style.position = "fixed";
@@ -171,7 +178,12 @@ export function PrintService({
         }
       };
 
-      toast.success(`Print job sent: ${selectedFile.name}`);
+      if (printLogFailed) {
+        toast.success(`Print job sent: ${selectedFile.name} (not logged)`);
+      } else {
+        toast.success(`Print job sent: ${selectedFile.name}`);
+      }
+
       setShowPrintSettings(false);
     } catch (err) {
       console.error("Print error:", err);
