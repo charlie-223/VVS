@@ -55,7 +55,7 @@ export function Sidebar({ activeView, onViewChange, currentUser }) {
           </div>
           <div className="text-center">
             <h2 className="text-sm font-semibold text-gray-900">
-              Shobe Printing
+              VVS Printing
             </h2>
             <p className="text-xs text-gray-500">Inventory System</p>
           </div>
@@ -88,7 +88,7 @@ export function Sidebar({ activeView, onViewChange, currentUser }) {
       <div className="p-4 border-t border-gray-200 flex-shrink-0 bg-gray-100">
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            © 2025 Shobe Printing Services
+            © 2025 VVS Printing Services
           </p>
           <p className="text-xs text-gray-400 mt-1">All rights reserved</p>
         </div>
