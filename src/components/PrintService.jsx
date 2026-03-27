@@ -17,6 +17,7 @@ export function PrintService({
 
   const isStaff = currentUser?.role === "Staff";
 
+  // Print settings state
   const [printSettings, setPrintSettings] = useState({
     copies: 1,
     paperSize: "letter",
@@ -80,6 +81,7 @@ export function PrintService({
     if (!selectedFile) return;
 
     try {
+      // Log the print job to Supabase transactions
       const { error } = await supabaseAdmin.from("transactions").insert({
         type: "Print",
         quantity: printSettings.copies,
@@ -94,6 +96,7 @@ export function PrintService({
         return;
       }
 
+      // Create a hidden iframe to print the document
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
       iframe.src = selectedFile.url;
@@ -122,14 +125,19 @@ export function PrintService({
 
   return (
     <div className="bg-white h-full flex flex-col">
-      <Header currentUser={currentUser} onLogout={onLogout} />
+      <Header
+        currentUser={currentUser}
+        onLogout={onLogout}
+      />
 
-      <div className="flex-1 overflow-auto p-8">
+      <div className="flex-1 overflow-auto p-6">
+        {/* Page Title */}
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Print Service
+        </h2>
+
         {/* Upload Section */}
         <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold text-gray-900">
-            Print Service
-          </h2>
           <div
             onClick={() => fileInputRef.current?.click()}
             className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 transition-colors hover:border-blue-500 hover:bg-blue-50"
@@ -209,7 +217,7 @@ export function PrintService({
                 </div>
                 <button
                   onClick={() => setShowPrintSettings(false)}
-                  className="rounded-lg p-1 text-gray-400 hover:bg-gray-100"
+                  className="rounded-lg p1 text-gray-400 hover:bg-gray-100"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -313,10 +321,7 @@ export function PrintService({
                   <select
                     value={printSettings.duplex}
                     onChange={(e) =>
-                      setPrintSettings({
-                        ...printSettings,
-                        duplex: e.target.value,
-                      })
+                      setPrintSettings({ ...printSettings, duplex: e.target.value })
                     }
                     className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
