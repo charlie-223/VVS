@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Upload, FileText, X, Printer, Settings } from "lucide-react";
-import { PageHeader } from "./PageHeader";
+import { Header } from "./Header";
 import { toast } from "sonner";
 import { supabaseAdmin } from "../lib/supabaseClient";
 
@@ -125,16 +125,17 @@ export function PrintService({
 
   return (
     <div className="bg-white h-full flex flex-col">
-      <PageHeader
-        title="Print Service"
+      <Header
         currentUser={currentUser}
         onLogout={onLogout}
-        showNotifications={true}
-        lowStockItems={lowStockItems}
-        onNavigateToAccount={onNavigateToAccount}
       />
 
       <div className="flex-1 overflow-auto p-6">
+        {/* Page Title */}
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Print Service
+        </h2>
+
         {/* Upload Section */}
         <div className="mb-6">
           <div
@@ -216,7 +217,7 @@ export function PrintService({
                 </div>
                 <button
                   onClick={() => setShowPrintSettings(false)}
-                  className="rounded-lg p-1 text-gray-400 hover:bg-gray-100"
+                  className="rounded-lg p1 text-gray-400 hover:bg-gray-100"
                 >
                   <X className="h-5 w-5" />
                 </button>
