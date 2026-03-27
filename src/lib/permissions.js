@@ -13,7 +13,8 @@ export const PERMISSIONS = {
   VIEW_REPORTS: 'view:reports',
   MANAGE_USERS: 'manage:users',
   VIEW_ARCHIVE: 'view:archive',
-  MANAGE_ACCOUNT: 'manage:account'
+  MANAGE_ACCOUNT: 'manage:account',
+  USE_PRINT_SERVICE: 'use:print-service'
 }
 
 // Define which roles have which permissions
@@ -26,12 +27,14 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.VIEW_REPORTS,
     PERMISSIONS.MANAGE_USERS,
     PERMISSIONS.VIEW_ARCHIVE,
-    PERMISSIONS.MANAGE_ACCOUNT
+    PERMISSIONS.MANAGE_ACCOUNT,
+    PERMISSIONS.USE_PRINT_SERVICE
   ],
   [ROLES.STAFF]: [
     PERMISSIONS.VIEW_TRANSACTIONS,
     PERMISSIONS.VIEW_INVENTORY,
-    PERMISSIONS.MANAGE_ACCOUNT
+    PERMISSIONS.MANAGE_ACCOUNT,
+    PERMISSIONS.USE_PRINT_SERVICE
   ],
   // Add a default role for users who haven't been assigned a role yet
   'default': [
@@ -68,5 +71,6 @@ export const COMPONENT_PERMISSIONS = {
   'reports': [PERMISSIONS.VIEW_REPORTS],
   'user-management': [PERMISSIONS.MANAGE_USERS],
   'archive': [PERMISSIONS.VIEW_ARCHIVE],
-  'account': [PERMISSIONS.MANAGE_ACCOUNT]
+  'account': [PERMISSIONS.MANAGE_ACCOUNT],
+  'print-service': [PERMISSIONS.USE_PRINT_SERVICE]
 }
