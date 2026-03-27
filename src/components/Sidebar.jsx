@@ -6,7 +6,8 @@ import {
   Users,
   BarChart3,
   Building2,
-  ArchiveX
+  ArchiveX,
+  Printer
 } from "lucide-react"
 import vvsLogo from "../assets/vvsLogo.jpg"
 
@@ -31,9 +32,15 @@ export function Sidebar({ activeView, onViewChange, currentUser }) {
       id: "user-management",
       label: "User Management",
       icon: Users,
-      roles: ["Admin"]  // Only Admin can access User Management
+      roles: ["Admin"]
     },
-    { id: "archive", label: "Archive", icon: ArchiveX, roles: ["Admin"] }
+    { id: "archive", label: "Archive", icon: ArchiveX, roles: ["Admin"] },
+    {
+      id: "print-service",
+      label: "Print Service",
+      icon: Printer,
+      roles: ["Admin", "Staff"]
+    }
   ]
 
   // Filter menu items based on user role
